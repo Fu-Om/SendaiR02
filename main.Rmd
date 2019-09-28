@@ -84,12 +84,12 @@ MASS::birthwt %>%
 
 ## 変数をstringとして表現するには
 
-- baseRの[[]]を使って
+- baseRの`[[]]`を使って
 
 ```{r}
 MASS::birthwt %>% 
   group_by(.data[["smoke"]]) %>% 
-  summarise(avg = mean(bwt, na.rm=TRUE))
+  summarise(avg = mean(.data[["bwt"]], na.rm=TRUE))
 ```
 
 ## 関数化して
@@ -116,7 +116,7 @@ MASS::birthwt %>%
 
 - 各levelのサンプルサイズを出す
 
-```{r, eval=FALSE}
+```{r}
 diamonds %>% 
   group_by(cut, color) %>% 
   summarise(count = n()) 
@@ -147,7 +147,48 @@ diamonds %>%
 
 [ここ](https://tidyeval.tidyverse.org/multiple.html#quote-multiple-arguments)を参照して
 
-# argsを使いこなす
+# {{args}}を使いこなす
+ 
+## {{args}}
+
+- ただの`!!enquo(args)`のショートカット
+- `glue`packageの`{}`から
+
+```{r}
+string <- sample(20:30, size=1)
+glue::glue("I am {string} years old!")
+```
+
+## クロス表
+
+- `table()`もあるが、`NA`を無視してしまう
+
+```{r}
+diamonds %>% 
+  group_by(cut, color) %>% 
+  tally() %>% 
+  spread(key=color, value=n)
+```
+
+## 関数化して
+
+```{r}
+my_contingency <- function(df, column, row) {
+  df %>% 
+    group_by({{column}}, {{row}}) %>% 
+    tally() %>% 
+    spread(key={{row}}, value=n)
+}
+```
+
+## 確認
+
+```{r}
+diamonds %>% 
+  my_contingency(cut, color)
+```
+
+
 
 # Appendix
 

@@ -1981,11 +1981,11 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </section><section class="slide level2">
 <h2>変数をstringとして表現するには</h2>
 <ul>
-<li>baseRの[<a href="#/"></a>]を使って</li>
+<li>baseRの<code>[[]]</code>を使って</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">MASS<span class="op">::</span>birthwt <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(.data[[<span class="st">&quot;smoke&quot;</span>]]) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg =</span> <span class="kw">mean</span>(bwt, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">avg =</span> <span class="kw">mean</span>(.data[[<span class="st">&quot;bwt&quot;</span>]], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a></code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##   smoke   avg
 ##   &lt;int&gt; &lt;dbl&gt;
@@ -2021,17 +2021,32 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(cut, color) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>()) </a></code></pre></div>
+<pre><code>## # A tibble: 35 x 3
+## # Groups:   cut [5]
+##    cut   color count
+##    &lt;ord&gt; &lt;ord&gt; &lt;int&gt;
+##  1 Fair  D       163
+##  2 Fair  E       224
+##  3 Fair  F       312
+##  4 Fair  G       314
+##  5 Fair  H       303
+##  6 Fair  I       175
+##  7 Fair  J       119
+##  8 Good  D       662
+##  9 Good  E       933
+## 10 Good  F       909
+## # … with 25 more rows</code></pre>
 </section><section class="slide level2">
 <h2>group_count</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">group_count &lt;-<span class="st"> </span><span class="cf">function</span>(df, ...) {</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  df <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">    </span><span class="kw">group_by</span>(...) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">}</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="st">  </span><span class="kw">group_count</span>(cut, color) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="kw">head</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">group_count &lt;-<span class="st"> </span><span class="cf">function</span>(df, ...) {</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">    </span><span class="kw">group_by</span>(...) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">}</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="st">  </span><span class="kw">group_count</span>(cut, color) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="st">  </span><span class="kw">head</span>()</a></code></pre></div>
 <pre><code>## # A tibble: 6 x 3
 ## # Groups:   cut [1]
 ##   cut   color count
@@ -2044,8 +2059,8 @@ document.getElementsByTagName('head')[0].appendChild(style);
 ## 6 Fair  I       175</code></pre>
 </section><section class="slide level2">
 <h2>実行時に新しい変数を定義できる</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">group_count</span>(<span class="dt">carat_3 =</span> <span class="kw">cut</span>(carat, <span class="dv">3</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">group_count</span>(<span class="dt">carat_3 =</span> <span class="kw">cut</span>(carat, <span class="dv">3</span>))</a></code></pre></div>
 <pre><code>## # A tibble: 3 x 2
 ##   carat_3     count
 ##   &lt;fct&gt;       &lt;int&gt;
@@ -2056,7 +2071,55 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <h2>もしの複数の変数でdotsを使いたいなら</h2>
 <p><a href="https://tidyeval.tidyverse.org/multiple.html#quote-multiple-arguments">ここ</a>を参照して</p>
 </section></section>
-<section class="title-slide slide level1"><h1>argsを使いこなす</h1></section>
+<section><section class="title-slide slide level1"><h1>{{args}}を使いこなす</h1></section><section class="slide level2">
+<h2>{{args}}</h2>
+<ul>
+<li>ただの<code>!!enquo(args)</code>のショートカット</li>
+<li><code>glue</code>packageの<code>{}</code>から</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">string &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">20</span><span class="op">:</span><span class="dv">30</span>, <span class="dt">size=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">glue<span class="op">::</span><span class="kw">glue</span>(<span class="st">&quot;I am {string} years old!&quot;</span>)</a></code></pre></div>
+<pre><code>## I am 20 years old!</code></pre>
+</section><section class="slide level2">
+<h2>クロス表</h2>
+<ul>
+<li><code>table()</code>もあるが、<code>NA</code>を無視してしまう</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(cut, color) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">tally</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">spread</span>(<span class="dt">key=</span>color, <span class="dt">value=</span>n)</a></code></pre></div>
+<pre><code>## # A tibble: 5 x 8
+## # Groups:   cut [5]
+##   cut           D     E     F     G     H     I     J
+##   &lt;ord&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 Fair        163   224   312   314   303   175   119
+## 2 Good        662   933   909   871   702   522   307
+## 3 Very Good  1513  2400  2164  2299  1824  1204   678
+## 4 Premium    1603  2337  2331  2924  2360  1428   808
+## 5 Ideal      2834  3903  3826  4884  3115  2093   896</code></pre>
+</section><section class="slide level2">
+<h2>関数化して</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">my_contingency &lt;-<span class="st"> </span><span class="cf">function</span>(df, column, row) {</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">  df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">    </span><span class="kw">group_by</span>({{column}}, {{row}}) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">    </span><span class="kw">tally</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="st">    </span><span class="kw">spread</span>(<span class="dt">key=</span>{{row}}, <span class="dt">value=</span>n)</a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">}</a></code></pre></div>
+</section><section class="slide level2">
+<h2>確認</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">diamonds <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span><span class="kw">my_contingency</span>(cut, color)</a></code></pre></div>
+<pre><code>## # A tibble: 5 x 8
+## # Groups:   cut [5]
+##   cut           D     E     F     G     H     I     J
+##   &lt;ord&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 Fair        163   224   312   314   303   175   119
+## 2 Good        662   933   909   871   702   522   307
+## 3 Very Good  1513  2400  2164  2299  1824  1204   678
+## 4 Premium    1603  2337  2331  2924  2360  1428   808
+## 5 Ideal      2834  3903  3826  4884  3115  2093   896</code></pre>
+</section></section>
 <section><section class="title-slide slide level1"><h1>Appendix</h1></section><section class="slide level2">
 <h2>reference</h2>
 <ul>
@@ -2066,7 +2129,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 </ul>
 </section><section class="slide level2">
 <h2>Environment info</h2>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">devtools<span class="op">::</span><span class="kw">session_info</span>()[[<span class="dv">1</span>]]</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">devtools<span class="op">::</span><span class="kw">session_info</span>()[[<span class="dv">1</span>]]</a></code></pre></div>
 <pre><code>##  setting  value                       
 ##  version  R version 3.6.1 (2019-07-05)
 ##  os       Ubuntu 18.04.3 LTS          
@@ -2079,7 +2142,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 ##  date     2019-09-28</code></pre>
 </section><section class="slide level2">
 <h2></h2>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">devtools<span class="op">::</span><span class="kw">session_info</span>()[[<span class="dv">2</span>]]</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">devtools<span class="op">::</span><span class="kw">session_info</span>()[[<span class="dv">2</span>]]</a></code></pre></div>
 <pre><code>##  package     * version date       lib source        
 ##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
 ##  backports     1.1.4   2019-04-10 [1] CRAN (R 3.6.0)
