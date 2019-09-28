@@ -122,7 +122,7 @@ diamonds %>%
   summarise(count = n()) 
 ```
 
-## group_count
+## group_countと関数化
 
 ```{r}
 group_count <- function(df, ...) {
@@ -130,11 +130,15 @@ group_count <- function(df, ...) {
     group_by(...) %>% 
     summarise(count = n())
 }
-
-diamonds %>% 
-  group_count(cut, color) %>% 
-  head()
 ```
+
+## 確認
+
+```{r}
+diamonds %>% 
+  group_count(cut, color)
+```
+
 
 ## 実行時に新しい変数を定義できる
 
