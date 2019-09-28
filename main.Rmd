@@ -1,0 +1,169 @@
+---
+title: "tidyverse での関数化tips"
+author: "SendaiR 02 @fuuuumin"
+date: "`r format(Sys.time(), '%Y / %m / %d')`"
+output:
+  revealjs::revealjs_presentation:
+# Removes title page
+    pandoc_args: [
+      '--from', 'markdown-auto_identifiers'
+      ]
+    theme: black
+    highlight: zenburn
+    transition: none
+    self_contained: true
+    css: slides.css
+    fig_width: 4
+    fig_height: 4
+    fig_caption: false
+
+  beamer_presentation:
+    toc: false
+    incremental: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, eval=TRUE, cache=TRUE)
+library(tidyverse)
+```
+
+# Introduction
+
+## whoami
+
+<div class="column1">
+
+fuuuumin314
+
+@[twitter](https://twitter.com/fuuuumin314)
+
+中級者向けの発表を目指す
+
+R歴: ５年, 医学データの解析
+
+研修医
+
+</div>
+
+<div class="column2" style="float: right;">
+
+<img src="img/user.jpeg" width="450" height="450">
+
+</div>
+
+## tidyverse 使っていますか？
+
+- Dataに対するactionに集中することができる
+- CLIで使いやすい
+- 処理が早い 
+
+
+## 一方で関数化するのは少し面倒
+
+- !!enquo(variable)
+- !!!enquos(variable)
+- ここで説明するには時間が短すぎる
+
+## 3つの改善方法
+
+1. .dataの切り出し
+1. dots(...)でパラメータを渡す
+1. argsを使いこなす
+
+# .dataの切り出し
+
+## Calculate average for each group
+
+- 各levelの平均を算出する
+
+```{r}
+MASS::birthwt %>% 
+  group_by(smoke) %>% 
+  summarize(avg = mean(bwt, na.rm=TRUE))
+```
+
+## 変数をstringとして表現するには
+
+- baseRの[[]]を使って
+
+```{r}
+MASS::birthwt %>% 
+  group_by(.data[["smoke"]]) %>% 
+  summarise(avg = mean(bwt, na.rm=TRUE))
+```
+
+## 関数化して
+
+```{r}
+group_mean <- function(df, group, mean_var) {
+  df %>% 
+    group_by(.data[[group]]) %>% 
+    summarise(avg = mean(.data[[mean_var]], na.rm=TRUE))
+}
+
+MASS::birthwt %>% 
+  group_mean(group="smoke", mean_var="bwt")
+```
+
+# dots(...)でパラメータを渡す
+
+## dots(...)
+
+- 1回だけならquotingなしで引数をとれる
+- 複数の名前あり/なしの引数をとれる
+
+## Count for each group
+
+- 各levelのサンプルサイズを出す
+
+```{r, eval=FALSE}
+diamonds %>% 
+  group_by(cut, color) %>% 
+  summarise(count = n()) 
+```
+
+## group_count
+
+```{r}
+group_count <- function(df, ...) {
+  df %>% 
+    group_by(...) %>% 
+    summarise(count = n())
+}
+
+diamonds %>% 
+  group_count(cut, color) %>% 
+  head()
+```
+
+## 実行時に新しい変数を定義できる
+
+```{r}
+diamonds %>% 
+  group_count(carat_3 = cut(carat, 3))
+```
+
+## もしの複数の変数でdotsを使いたいなら
+
+[ここ](https://tidyeval.tidyverse.org/multiple.html#quote-multiple-arguments)を参照して
+
+# argsを使いこなす
+
+# Appendix
+
+## reference
+- [useR! 2019 Toulouse - Talk Programming 1 - Lionel Henry](https://www.youtube.com/watch?v=C78fcsJmESI) 元ネタ
+- [tidyevval](https://tidyeval.tidyverse.org)
+- [スライドループ回避](https://qiita.com/mwmsnn/items/e01f36a6245617354065)
+
+## Environment info
+
+```{r}
+devtools::session_info()[[1]]
+```
+
+## 
+
+```{r}
+devtools::session_info()[[2]]
+```
